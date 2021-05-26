@@ -37,3 +37,10 @@ execution. You'll need to remove this submission from the
 
 If the script crashes, you might want to re-run it, and it will restart from
 where it stopped.
+
+### Future improvements
+
+- Allow downloading from other OJs
+- Add metadata to files, like submission date, execution time, etc
+- Skip downloaded files instead of aborting
+- Send submission from failed downloads to a dead letter queue (maybe?)
