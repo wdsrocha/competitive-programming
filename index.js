@@ -1,9 +1,18 @@
+/* eslint-disable no-undef */
 const puppeteer = require("puppeteer");
 const fs = require("fs");
 const chalk = require("chalk");
+const { exit } = require("process");
 
 const args = process.argv.slice(2);
 const [email, password] = args;
+
+if (!email || !password) {
+  console.log(
+    "Pass your email and password as arguments. Example: `yarn start foo@bar.com foobarqux123`"
+  );
+  exit();
+}
 
 const BASE_URL = "https://www.urionlinejudge.com.br/judge/pt";
 const routes = {
@@ -60,7 +69,6 @@ function clickAndWaitForNavigation(page, selector, clickOptions, waitOptions) {
 
     await page.goto(routes.submission(submission));
     const { title, code } = await page.evaluate(() => {
-      // eslint-disable-next-line no-undef
       const titleElement = document.querySelector(
         "#information-code > dl > dd:nth-child(2) > a"
       );
@@ -68,7 +76,15 @@ function clickAndWaitForNavigation(page, selector, clickOptions, waitOptions) {
 
       // eslint-disable-next-line no-undef
       const codeElement = document.querySelector(".ace_text-layer");
-      const code = codeElement && codeElement.innerText;
+      let code = codeElement && codeElement.innerText;
+
+      if (code) {
+        const dateElement = document.querySelector(
+          "#information-code > dl > dd:nth-child(16)"
+        );
+        const date = dateElement && dateElement.innerText;
+        code = `// Submitted at ${date}\n${code}`;
+      }
 
       return {
         title,
